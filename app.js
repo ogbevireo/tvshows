@@ -2,7 +2,26 @@ const form = document.querySelector('#searchForm');
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const searchTerm = form.elements.query.value;
-  const res = await axios.get(`https://api.tvmaze.com/search/shows?q=${searchTerm}`);
-  console.log(res.data)
+  const config = { params: { q: searchTerm } }
+  const res = await axios.get(`https://api.tvmaze.com/search/shows`, config);
+  makeImages(res.data);
+  // console.log(res.data)
+  form.elements.query.value = '';
+
 })
 
+const makeImages = (shows) => {
+  for (let result of shows) {
+    if (result.show.image) {
+
+      const img = document.createElement('img');
+      img.src = result.show.image.medium;
+      document.body.append(img)
+    } else if (result.show.image) {
+      document.body.remove(img)
+      const img = document.createElement('img');
+      img.src = result.show.image.original;
+      document.body.append(img)
+    }
+  }
+}
